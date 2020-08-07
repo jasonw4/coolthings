@@ -3,6 +3,8 @@ from tkinter import Tk, Canvas
 
 
 
+
+
 def create_board(width, height):
   columns = []
   for i in range(height):
@@ -50,15 +52,15 @@ def uncover_board(gameboard,y,x):
   if cell != None:
     return
   elif cell == None:
-    gameboard[y][x] = get_minecount(gameboard,x,y)
+    gameboard[y][x] = get_minecount(gameboard,y,x)
     if gameboard[y][x] > 0:
       return
     else:
       for i in range(y-1, y+2):
-        if i >= 0 and i <= height-1:
+        if i >= 0 and i < height:
           for n in range(x-1, x+2):
-           if n >= 0 and n <= width-1:
-             uncover_board (gameboard, i, n)
+           if n >= 0 and n < width:
+             uncover_board(gameboard,i, n)
 
 
 def check_won(gameboard):
@@ -68,56 +70,45 @@ def check_won(gameboard):
   
   return True
 
+   
 
-#class Minesweeper():
- # def __init__(self):
-  #  self.root = Tk()
+
+
 
 
 def run():
-  width = 5 
-  height = 5
+  width = 8
+  height = 8
   board = create_board(height, width)
-  bury_mines(board, 3)    
+  bury_mines(board, 7)    
   root = Tk()
   root.wm_title ("Minesweeper")
-  heightpxls = 120 * height
-  widthpxls = 120 * width
+  heightpxls = 50 * height
+  widthpxls = 50 * width
   canvas = Canvas(master=root, height=heightpxls,width = widthpxls)
   canvas.pack()
   def handle_click(event):
     
-    x = event.x // 100
-    y = event.y // 100
+    x = event.x // 50
+    y = event.y // 50
     uncover_board(board, y, x)
-    print(x, y)
+    print(y,x)
     if board[y][x] == '-1':
       canvas.unbind("<Button-1>")
-      canvas.create_text ((heightpxls//2),(widthpxls//2),font="arial 20", text = "YOU LOSE")
+      
+      canvas.create_rectangle ((x*50), (y*50), ((x*50)+50), ((y*50)+50), fill="red", outline="white")
+      canvas.create_text ((heightpxls//2),(widthpxls//2),font="arial 36", text = "YOU LOSE")
     elif check_won(board) == True:
+      display_board(board, canvas)
       canvas.unbind("<Button-1>")
-      canvas.create_text ((heightpxls//2),(widthpxls//2),font="arial 20", text = "YOU WIN")
+      canvas.create_text ((heightpxls//2),(widthpxls//2),font="arial 36", text = "YOU WIN")
     else:
       display_board(board, canvas)
-
-
-      
-
-
-      
+  canvas.bind("<Button-1>", handle_click)
   
-    
-
-
-
-
-
-
-  canvas.bind("<Button-1>", handle_click)  
   display_board(board, canvas)
 
   root.mainloop()
-
 
 
 #widthpxls = canvas.winfo_width()
@@ -128,15 +119,16 @@ def display_board(board, canvas):
   row_length = len(board[0])
   for i in range(0,len(board)):
     for n in range (0, row_length):
-      x1 = (n * 100 ) + 10
-      y1 = (i * 100) + 10
-      if board [i][n] in range (0, 9):
-        canvas.create_rectangle(x1, y1, (x1 +100), (y1 + 100), fill= "light grey", outline = "white")
-        canvas.create_text((x1 + 50),(y1 + 50),font="arial 20", text=str(get_minecount (board, i, n)))
+      x1 = (n * 50 ) #+ 10
+      y1 = (i * 50) #+ 10
+      if board[i][n] in range (0, 9):
+        canvas.create_rectangle(x1, y1, (x1 +50), (y1 + 50), fill= "light grey", outline = "white")
+        canvas.create_text((x1 + 25),(y1 + 25),font="arial 20", text=str(get_minecount (board, i, n)))
       elif board[i][n] == None:
-        canvas.create_rectangle(x1, y1, (x1 +100), (y1 + 100), fill= "grey", outline = "white")
+        canvas.create_rectangle(x1, y1, (x1 +50), (y1 + 50), fill= "grey", outline = "white")
       else:
-       canvas.create_rectangle(x1, y1, (x1 +100), (y1 + 100), fill= "grey", outline = "white") 
+       canvas.create_rectangle(x1, y1, (x1 +50), (y1 + 50), fill= "grey", outline = "white") 
       
   
 run()
+
