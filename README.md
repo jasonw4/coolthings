@@ -1,3 +1,3 @@
 # coolthings
 
-print("yeeet")
+just some python coding attempts :)
